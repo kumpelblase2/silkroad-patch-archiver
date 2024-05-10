@@ -5,7 +5,7 @@ use std::path::Path;
 use tokio::fs::File;
 use tokio::io::copy;
 
-pub async fn download_patch(patch: UpdateInformation, target_dir: &Path) -> Result<()> {
+pub async fn download_patch(patch: &UpdateInformation, target_dir: &Path) -> Result<()> {
     let patch_folder = target_dir.join(patch.new_version.to_string());
     if !&patch_folder.exists() {
         tokio::fs::create_dir(&patch_folder).await?;

@@ -27,11 +27,11 @@ pub fn start_checker(start_version: u32, pause: Duration) -> Receiver<UpdateInfo
                 Ok(None) => {}
                 Ok(Some(patch)) => {
                     current_version = patch.new_version;
-                    if let Err(e) = sender.send(patch).await {
+                    if let Err(_) = sender.send(patch).await {
                         break;
                     }
                 }
-                Err(e) => {
+                Err(_) => {
                     break;
                 }
             }
