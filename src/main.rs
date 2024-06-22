@@ -17,13 +17,26 @@ async fn main() -> Result<()> {
     let mut config = load_config();
     let mut receiver = start_checker(config.current_version, Duration::from_secs(60 * 60 * 5));
     let target_dir = Path::new("./patches");
-    while let Some(patch) = receiver.recv().await {
-        let err = download_patch(&patch, target_dir).await;
-        if let Err(e) = err {
-            println!("{e}");
-        } else {
-            config.current_version = patch.new_version;
-            save_config(&config).expect("Should be able to save config.");
+
+    loop {
+        tokio::select! {
+            info = receiver.recv() => {
+                match info {
+                    Some(patch) => {
+                        let err = download_patch(&patch, target_dir).await;
+                        if let Err(e) = err {
+                            println!("{e}");
+                        } else {
+                            config.current_version = patch.new_version;
+                            save_config(&config).expect("Should be able to save config.");
+                        }
+                    },
+                    None => break,
+                }
+            }
+            _ = tokio::signal::ctrl_c() => {
+                break;
+            }
         }
     }
 

@@ -48,14 +48,14 @@ async fn fetch_patch_files(my_version: u32) -> Result<Option<UpdateInformation>>
     let (mut reader, mut writer) = connection.into_silkroad_stream();
     PassiveSecuritySetup::handle(&mut reader, &mut writer).await?;
     writer
-        .send(IdentityInformation {
+        .write_packet(IdentityInformation {
             module_name: "SR_Client".to_owned(),
             locality: 0,
         })
         .await?;
     let _ = reader.next_packet::<IdentityInformation>().await?;
     writer
-        .send(PatchRequest {
+        .write_packet(PatchRequest {
             content: 0x12,
             module: "SR_Client".to_string(),
             version: my_version,
