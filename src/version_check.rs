@@ -63,7 +63,10 @@ async fn fetch_patch_files(my_version: u32) -> Result<Option<UpdateInformation>>
         .await?;
     let response = reader.next_packet::<PatchResponse>().await?;
     match response.result {
-        PatchResult::UpToDate { .. } => Ok(None),
+        PatchResult::UpToDate { .. } => {
+            println!("We're up to date!");
+            Ok(None)
+        }
         PatchResult::Problem { error } => match error {
             PatchError::InvalidVersion => Err(eyre!("Invalid version presented.")),
             PatchError::Update {
