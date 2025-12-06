@@ -7,10 +7,10 @@ RUN rustup target add x86_64-unknown-linux-musl
 RUN apk add --no-cache musl-dev
 RUN cargo build --release --target x86_64-unknown-linux-musl
 
-FROM scratch
+FROM gcr.io/distroless/cc-debian12
 
 WORKDIR /
-COPY --from=builder /usr/src/patch-archiver/target/x86_64-unknown-linux-musl/release/silkroad-patch-archiver /silkroad-patch-archiver
+COPY --from=builder /usr/src/patch-archiver/target/x86_64-unknown-linux-musl/release/silkroad-patch-archiver /
 
 VOLUME /patches
 CMD ["/silkroad-patch-archiver"]
